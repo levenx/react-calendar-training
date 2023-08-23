@@ -1,62 +1,15 @@
-import "./App.css";
-import { getDaysOfMonth } from "./utils";
-import { useMemo, useState } from "react";
-import dayjs from "dayjs";
-import "dayjs/locale/zh-cn";
-dayjs.locale("zh-cn");
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import SimpleCalendar from "./pages/simple-calendar";
+import ScrollCalendar from "./pages/scroll-calendar";
 
-function App() {
-  const [month, setMonth] = useState(dayjs());
-
-  const days = useMemo(() => {
-    return getDaysOfMonth(month.year(), month.month() + 1);
-  }, [month]);
-
-  days.forEach((day) => console.log(day.format("YYYY-MM-DD")));
-
-  const weekTitles = useMemo(() => {
-    return [...Array(7)].map((_, weekInx) => {
-      return dayjs().day(weekInx);
-    });
-  }, []);
-
-  const onMonthSwitch = (action: number) => {
-    setMonth((month) => {
-      return month.add(action, "month");
-    });
-  };
-
+export default function App() {
   return (
-    <div className="App">
-      <div className="calendar">
-        <div className="calendar-month">
-          <div
-            className="calendar-month-switch"
-            onClick={() => onMonthSwitch(-1)}
-          >
-            {"<"}
-          </div>
-          <div>{month.format("MMM YYYY")}</div>
-          <div
-            className="calendar-month-switch"
-            onClick={() => onMonthSwitch(1)}
-          >
-            {">"}
-          </div>
-        </div>
-        <div className="calendar-title">
-          {weekTitles.map((title) => {
-            return <div className="calendar-week">{title.format("dd")}</div>;
-          })}
-        </div>
-        <div className="calendar-content">
-          {days.map((day) => {
-            return <div className="calendar-day">{day.format("DD")}</div>;
-          })}
-        </div>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/simple-calendar" Component={SimpleCalendar} />
+        <Route path="/scroll-calendar" Component={ScrollCalendar} />
+        <Route path="*" element={<Navigate to="/simple-calendar" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
